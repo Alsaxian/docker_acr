@@ -1,0 +1,27 @@
+name: login into az and acr
+
+on:
+  [push, pull_request, workflow_dispatch]
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+        # checkout the repo
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+          
+        - name: 'Login via Azure CLI'
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZ_SP_CREDENTIALS }}
+        
+        - name: 'Build and push image'
+          uses: azure/docker-login@v1
+          with:
+            login-server: ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}
+            username: ${{ secrets.AZ_REGISTRY_USERNAME }}
+            password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
+        - run: |
+            docker build . -t ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+            docker push ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}

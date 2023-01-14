@@ -1,4 +1,4 @@
-name: try to connect to acr via username and password
+name: only use username and password
 
 on:
   [push, pull_request, workflow_dispatch]
@@ -10,18 +10,15 @@ jobs:
         # checkout the repo
         - name: 'Checkout GitHub Action'
           uses: actions/checkout@main
-          
-        - name: 'Login via Azure CLI'
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZ_SP_CREDENTIALS }}
         
-        - name: 'Build and push image'
+        - name: 'Log in acr'
           uses: azure/docker-login@v1
           with:
             login-server: ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}
             username: ${{ secrets.AZ_REGISTRY_USERNAME }}
             password: ${{ secrets.AZ_REGISTRY_PASSWORD }}
-        - run: |
-            docker build . -t ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
-            docker push ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+        
+        - name: "pull"
+          run: |
+            az acr login --name ${{ secrets.AZ_REGISTRY_NAME }}
+            docker pull ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp
