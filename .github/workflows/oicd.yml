@@ -24,4 +24,5 @@ jobs:
 
     - name: Pull an image
       run: |
+        az acr login --name ${{ secrets.AZ_REGISTRY_NAME }} ## important
         docker pull ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp
