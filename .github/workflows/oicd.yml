@@ -1,0 +1,27 @@
+name: Run Azure Login with OpenID Connect
+on: [push, orkflow_dispatch]
+
+permissions:
+      id-token: write
+      contents: read
+      
+jobs: 
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+          client-id: ${{ secrets.AZ_SP_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_SP_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SP_SUBSCRIPTION_ID }}
+  
+    - name: 'Run Azure CLI commands'
+      run: |
+          az account show
+          az group list
+          pwd 
+
+    - name: Pull an image
+      run: |
+        docker pull ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp
