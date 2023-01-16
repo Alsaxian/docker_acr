@@ -1,0 +1,28 @@
+name: OpenID Connecttion created with MS Rest API
+on: [push, workflow_dispatch]
+
+permissions:
+      id-token: write
+      contents: read
+      
+jobs: 
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Az CLI login'
+      uses: azure/login@v1
+      with:
+          client-id: ${{ secrets.AZ_SP2_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZ_SP_TENANT_ID }}
+          subscription-id: ${{ secrets.AZ_SP_SUBSCRIPTION_ID }}
+  
+    - name: 'Run Azure CLI commands'
+      run: |
+          az account show
+          az group list
+          pwd 
+
+    - name: Pull an image
+      run: |
+        az acr login --name ${{ secrets.AZ_REGISTRY_NAME }} ## important
+        docker pull ${{ secrets.AZ_REGISTRY_LOGIN_SERVER }}/sampleapp
