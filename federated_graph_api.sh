@@ -1,0 +1,1 @@
+az rest --method POST --uri 'https://graph.microsoft.com/beta/applications/<APPLICATION-OBJECT-ID>/federatedIdentityCredentials' --body '{"name":"<CREDENTIAL-NAME>","issuer":"https://token.actions.githubusercontent.com","subject":"repo:organization/repository:ref:refs/heads/<branch-name>","description":"Testing","audiences":["api://AzureADTokenExchange"]}'
